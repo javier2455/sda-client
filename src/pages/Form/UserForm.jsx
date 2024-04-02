@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import DashBoardLayout from '../../layout/DashBoardLayout'
 import { useForm } from 'react-hook-form'
 import axios from 'axios'
@@ -6,6 +6,14 @@ import { useSessionStorage } from '../../hooks/useSessionStorage'
 import { useState } from 'react'
 import showToastMessages from '../../libs/showToastMessages'
 import handleErrors from '../../libs/handleErrors'
+import {
+  CREATE_NEW_USER,
+  DASHBOARD_USER,
+  GET_USER_BY_ID,
+  UPDATE_NEW_USER
+} from '../../routes/routes'
+import { useEffect } from 'react'
+import { FetchData } from '../../libs/fetchData'
 
 export default function UserForm() {
   const [loading, setLoading] = useState(false)
@@ -19,27 +27,61 @@ export default function UserForm() {
 
   const { getItem } = useSessionStorage()
   const navigate = useNavigate()
+  const { id } = useParams()
+  // console.log('parametro id:', id)
 
+  useEffect(() => {
+    if (id) {
+      const credentials = JSON.parse(getItem('user'))
+      FetchData({
+        url: `${GET_USER_BY_ID}/${id}/${credentials.token}`,
+        method: 'get',
+        setLoading,
+        setData: reset
+      })
+      // const response = axios.get(`${GET_USER_BY_ID}/${id}/${credentials.token}`)
+      // reset(response.data.data)
+    }
+  }, [])
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       setLoading(true)
       const credentials = JSON.parse(getItem('user'))
-      const response = await axios.post(
-        `http://localhost:4001/user/create_user/${credentials.token}`,
-        data
-      )
-      console.log('this is the response', response)
-      if (response.status === 201) {
-        showToastMessages({
-          title: response.data.message,
-          description: response.data.description,
-          type: 'success',
-          duration: 2000
-        })
-        setTimeout(() => {
-          navigate('/dashboard/users')
-        }, 2000)
+      if (id) {
+        const response = await axios.patch(
+          `${UPDATE_NEW_USER}/${id}/${credentials.token}`,
+          data
+        )
+        console.log(response)
+        if (response.status === 200) {
+          showToastMessages({
+            title: response.data.message,
+            description: response.data.description,
+            type: 'success',
+            duration: 2000
+          })
+          setTimeout(() => {
+            navigate(DASHBOARD_USER)
+          }, 2000)
+        }
+      } else {
+        const response = await axios.post(
+          `${CREATE_NEW_USER}/${credentials.token}`,
+          data
+        )
+        console.log('this is the response', response)
+        if (response.status === 201) {
+          showToastMessages({
+            title: response.data.message,
+            description: response.data.description,
+            type: 'success',
+            duration: 2000
+          })
+          setTimeout(() => {
+            navigate(DASHBOARD_USER)
+          }, 2000)
+        }
       }
     } catch (error) {
       handleErrors({ error })
@@ -67,10 +109,13 @@ export default function UserForm() {
                 type='text'
                 id='username'
                 name='username'
-                className={`bg-gray-200 text-gray-900 text-lg rounded-lg w-[60%] block border-none ring-0 focus:ring-1 focus:ring-blue-300 shadow-sm ${
-                  errors.username &&
-                  'ring-red-300 focus:ring-1 focus:ring-red-300'
+                className={`block w-[60%] rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 text-sm sm:text-md sm:leading-6 ${
+                  loading && 'opacity-60'
                 }`}
+                // className={`bg-gray-200 text-gray-900 text-lg rounded-lg w-[60%] block border-none ring-0 focus:ring-1 focus:ring-blue-300 shadow-sm ${
+                //   errors.username &&
+                //   'ring-red-300 focus:ring-1 focus:ring-red-300'
+                // }`}
                 placeholder='Ladya.sandra'
                 {...register('username', {
                   required: {
@@ -91,7 +136,9 @@ export default function UserForm() {
                 type='email'
                 id='email'
                 name='email'
-                className='bg-gray-200 text-gray-900 text-lg rounded-lg block w-[60%] border-none focus:ring-1 ring-0 ring-blue-300 shadow-sm'
+                className={`block w-[60%] rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 text-sm sm:text-md sm:leading-6 ${
+                  loading && 'opacity-60'
+                }`}
                 placeholder='Ladya.sandra@onat.gob.cu'
                 {...register('email', {
                   required: {
@@ -112,7 +159,9 @@ export default function UserForm() {
                 type='password'
                 id='password'
                 name='password'
-                className='bg-gray-200 text-gray-900 text-lg rounded-lg block w-[60%] border-none focus:ring-1 ring-0 ring-blue-300 shadow-sm'
+                className={`block w-[60%] rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 text-sm sm:text-md sm:leading-6 ${
+                  loading && 'opacity-60'
+                }`}
                 placeholder='*******'
                 {...register('password', {
                   required: {
@@ -148,7 +197,9 @@ export default function UserForm() {
               </label>
               <select
                 name='role'
-                className='bg-gray-200 text-gray-900 text-lg rounded-lg block w-[60%] border-none focus:ring-1 ring-0 ring-blue-300 shadow-sm'
+                className={`block w-[60%] rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 text-sm sm:text-md sm:leading-6 ${
+                  loading && 'opacity-60'
+                }`}
                 id='role'
                 {...register('role', {
                   required: {

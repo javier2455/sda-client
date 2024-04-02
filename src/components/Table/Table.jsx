@@ -4,6 +4,7 @@ import TrashIcon from '../../icons/Trash'
 import axios from 'axios'
 import showToastMessages from '../../libs/showToastMessages'
 import { useSessionStorage } from '../../hooks/useSessionStorage'
+import { Link } from 'react-router-dom'
 
 export default function Table({ data, setData }) {
   const { getItem } = useSessionStorage()
@@ -65,9 +66,9 @@ export default function Table({ data, setData }) {
                 <Badge text={u.role} />
               </td>
               <td className='px-6 py-4 flex items-center gap-x-2'>
-                <span className='cursor-pointer text-green-400 p-2 rounded-full hover:bg-green-400 hover:text-white transition'>
+                <Link to={`/dashboard/users/form/${u.id}`} className='cursor-pointer text-green-400 p-2 rounded-full hover:bg-green-400 hover:text-white transition'>
                   <EditIcon />
-                </span>
+                </Link>
                 <span
                   onClick={() => handleDelete(u.id)}
                   className='cursor-pointer text-red-400 p-2 rounded-full hover:bg-red-400 hover:text-white transition'

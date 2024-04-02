@@ -22,6 +22,7 @@ export default function App() {
             <Route index path='/dashboard' element={<Dashboard />} />
             <Route path='/dashboard/users' element={<Users />} />
             <Route path='/dashboard/users/form' element={<UserForm />} />
+            <Route path='/dashboard/users/form/:id' element={<UserForm />} />
             <Route path='/dashboard/apis' element={<Apis />} />
           </Route>
         </Routes>
