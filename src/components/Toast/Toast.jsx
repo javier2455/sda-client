@@ -5,7 +5,7 @@ import AlertWarningIcon from '../../icons/AlertWarning'
 import InfoIcon from '../../icons/Info'
 import SuccessIcon from '../../icons/Checks'
 
-export default function Toast({ tittle, description, type, t }) {
+export default function Toast({ title, description, type, t }) {
   const styles = (type) => {
     if (type === 'error') {
       return 'bg-red-200 text-red-600'
@@ -37,7 +37,7 @@ export default function Toast({ tittle, description, type, t }) {
         <span className='sr-only'>Type icon</span>
       </div>
       <div className='ms-3 text-sm font-normal'>
-        <h3 className='text-[16px] font-semibold'>{tittle}</h3>
+        <h3 className='text-[16px] font-semibold'>{title}</h3>
         <p className='text-[14px]'>{description}</p>
       </div>
       <div className='w-5 h-full'/>

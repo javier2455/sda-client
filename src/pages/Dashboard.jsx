@@ -1,10 +1,18 @@
 // import { useContext } from 'react'
-// import AuthContext from '../context/AuthContext'
+// import { AuthContext } from '../context/AuthContext'
+import DashBoardLayout from '../layout/DashBoardLayout'
 
 export default function Dashboard() {
-  // const { user, logOut } = useContext(AuthContext)
+  // const { profile } = useContext(AuthContext)
+  // const user = profile()
   return (
-    <h1>Dashboard</h1>
+    <DashBoardLayout>
+      <h1>Dashboard</h1>
+    </DashBoardLayout>
+    // <>
+    //   <h1>{user.username}</h1>
+    //   <p>{user.email}</p>
+    // </>
     // <div className='container'>
     //   <div>
     //     <h1>Welcome! {user?.username}</h1>

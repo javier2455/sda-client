@@ -9,11 +9,14 @@ export const AuthContext = createContext()
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
-  const { setItem } = useSessionStorage()
+  const [loading, setLoading] = useState(false)
+
+  const { setItem, getItem, removeItem } = useSessionStorage()
   const navigate = useNavigate()
 
   const login = async ({ credentials }) => {
     try {
+      setLoading(true)
       const response = await axios({
         method: 'post',
         url: 'http://localhost:4001/auth/login',
@@ -24,7 +27,8 @@ const AuthProvider = ({ children }) => {
         showToastMessages({
           title: response.data.message,
           description: response.data.description,
-          type: 'success'
+          type: 'success',
+          duration: 2000
         })
         setUser(response.data.data)
         setItem('user', response.data.data)
@@ -35,15 +39,27 @@ const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error(error)
       handleErrors({ error })
+    } finally {
+      setLoading(false)
     }
   }
-  const logout = () => {}
+  const logout = () => {
+    setUser(null)
+    removeItem('user')
+    navigate('/login')
+  }
+
+  function profile() {
+    return JSON.parse(getItem('user'))
+  }
 
   const data = {
     user,
     setUser,
     login,
-    logout
+    logout,
+    profile,
+    loading
   }
 
   return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>

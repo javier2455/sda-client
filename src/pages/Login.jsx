@@ -1,6 +1,8 @@
 import { useContext, useState } from 'react'
 import { AuthContext } from '../context/AuthContext'
 import LoginImageBackground from '../assets/background-login.webp'
+import LoaderIcon from '../icons/Loader'
+import ONAT_LOGO from '../assets/onatLogo.jpeg'
 
 export default function Login() {
   const [input, setInput] = useState({
@@ -8,7 +10,7 @@ export default function Login() {
     password: ''
   })
 
-  const { login } = useContext(AuthContext)
+  const { login, loading } = useContext(AuthContext)
   const handleSubmitEvent = (e) => {
     e.preventDefault()
     if (input.username !== '' && input.password !== '') {
@@ -35,9 +37,9 @@ export default function Login() {
         <div className='bg-white md:bg-inherit px-4 py-6 md:px-0 md:py-0 rounded-md shadow-xl md:shadow-none'>
           <div className='sm:mx-auto sm:w-full sm:max-w-sm'>
             <img
-              className='mx-auto h-10 w-auto'
-              src='https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600'
-              alt='Your Company'
+              className='mx-auto w-auto h-16'
+              src={ONAT_LOGO}
+              alt='ONAT-logo'
             />
             <h2 className='mt-10 text-center text-3xl font-bold leading-9 tracking-tight text-gray-900'>
               Sistema de Documentación de APIs
@@ -60,8 +62,9 @@ export default function Login() {
                     type='text'
                     autoComplete='username'
                     required
-                    className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                    className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${loading && 'opacity-60'}`}
                     onChange={handleInput}
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -87,8 +90,9 @@ export default function Login() {
                     type='password'
                     autoComplete='current-password'
                     required
-                    className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                    className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${loading && 'opacity-60'}`}
                     onChange={handleInput}
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -96,9 +100,11 @@ export default function Login() {
               <div>
                 <button
                   type='submit'
-                  className='flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+                  className={`${loading && 'cursor-not-allowed'} flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500`}
+                  disabled={loading}
                 >
-                  Sign in
+                  <span className='animate-spin mr-2'>{loading && <LoaderIcon />}</span>
+                  Iniciar sesión
                 </button>
               </div>
             </form>

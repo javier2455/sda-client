@@ -4,13 +4,13 @@ export const useSessionStorage = () => {
   const [value, setValue] = useState(null)
 
   const setItem = (key, value) => {
-    sessionStorage.setItem(key, value)
+    sessionStorage.setItem(key, JSON.stringify(value))
     setValue(value)
   }
 
   const getItem = (key) => {
     const value = sessionStorage.getItem(key)
-    setValue(value)
+    // setValue(value)
     return value
   }
 

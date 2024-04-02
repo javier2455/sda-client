@@ -1,13 +1,13 @@
 import { toast } from "sonner";
 import Toast from "../components/Toast/Toast";
 
-export default function showToastMessages({title, description, type}) {
+export default function showToastMessages({title, description, type, duration = 4000}) {
   return toast.custom((t) => (
     <Toast
-      tittle={title}
+      title={title}
       description={description}
       t={t}
-      type={type}
+      type={type}     
     />
-  ))
+  ), {duration})
 }

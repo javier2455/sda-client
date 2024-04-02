@@ -1,6 +1,9 @@
+import DashBoardLayout from '../layout/DashBoardLayout'
 
 export default function Apis() {
   return (
-    <div>Apis</div>
+    <DashBoardLayout>
+      <h1>Apis</h1>
+    </DashBoardLayout>
   )
 }
