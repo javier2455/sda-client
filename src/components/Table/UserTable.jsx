@@ -5,10 +5,19 @@ import axios from 'axios'
 import showToastMessages from '../../libs/showToastMessages'
 import { useSessionStorage } from '../../hooks/useSessionStorage'
 import { Link } from 'react-router-dom'
+import DeleteModal from '../Modal/DeleteModal'
+import { useState } from 'react'
+import { DASHBOARD_USER_FORM } from '../../routes/routes'
 
-export default function Table({ data, setData }) {
+export default function UserTable({ data, setData }) {
+  const [openModal, setOpenModal] = useState(false)
+  const [user, setUser] = useState(null)
   const { getItem } = useSessionStorage()
 
+  const handleModal = (user) => {
+    setOpenModal(true)
+    setUser(user)
+  }
 
   const handleDelete = async (id) => {
     const credentials = JSON.parse(getItem('user'))
@@ -24,13 +33,14 @@ export default function Table({ data, setData }) {
         type: 'success',
         duration: 2000
       })
-      setData(data.filter(d => d.id !== response.data.data.id))
+      setData(data.filter((d) => d.id !== response.data.data.id))
+      setOpenModal(false)
     }
   }
   return (
     <div className='relative overflow-x-auto sm:rounded-lg'>
       <table className='w-full text-sm text-left text-gray-500'>
-        <thead className='text-[15px] text-black font-bold uppercase bg-gray-200'>
+        <thead className='text-[15px] text-black font-bold uppercase bg-blue-100'>
           <tr>
             <th scope='col' className='px-6 py-3'>
               Usuario
@@ -66,11 +76,14 @@ export default function Table({ data, setData }) {
                 <Badge text={u.role} />
               </td>
               <td className='px-6 py-4 flex items-center gap-x-2'>
-                <Link to={`/dashboard/users/form/${u.id}`} className='cursor-pointer text-green-400 p-2 rounded-full hover:bg-green-400 hover:text-white transition'>
+                <Link
+                  to={`${DASHBOARD_USER_FORM}/${u.id}`}
+                  className='cursor-pointer text-green-400 p-2 rounded-full hover:bg-green-400 hover:text-white transition'
+                >
                   <EditIcon />
                 </Link>
                 <span
-                  onClick={() => handleDelete(u.id)}
+                  onClick={() => handleModal(u)}
                   className='cursor-pointer text-red-400 p-2 rounded-full hover:bg-red-400 hover:text-white transition'
                 >
                   <TrashIcon />
@@ -80,6 +93,34 @@ export default function Table({ data, setData }) {
           ))}
         </tbody>
       </table>
+      <DeleteModal open={openModal} onClose={() => setOpenModal(false)}>
+        <div className='w-[400px] text-center'>
+          <TrashIcon styles={'size-20 text-red-500 mx-auto'} />
+          <div className='mx-auto my-4 w-full'>
+            <h3 className='text-gray-800 text-xl font-bold'>
+              Confirmar eliminación
+            </h3>
+            <p className='text-sm text-gray-500'>
+              ¿Estas seguro de eliminar al usuario{' '}
+              <span className='font-bold'>{user?.username}</span> ?
+            </p>
+          </div>
+          <div className='flex gap-4 justify-center'>
+            <button
+              onClick={() => handleDelete(user?.id)}
+              className='bg-red-800 px-4 py-2 uppercase text-white hover:bg-red-600 transition rounded-md shadow'
+            >
+              Eliminar
+            </button>
+            <button
+              onClick={() => setOpenModal(false)}
+              className='bg-gray-200 px-4 py-2 uppercase text-gray-500 hover:bg-gray-300 transition rounded-md shadow'
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </DeleteModal>
     </div>
   )
 }

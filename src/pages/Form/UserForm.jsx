@@ -17,11 +17,12 @@ import { FetchData } from '../../libs/fetchData'
 
 export default function UserForm() {
   const [loading, setLoading] = useState(false)
+  const [titleForm, setTitleForm] = useState('Añadir Nuevo Usuario')
   const {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
+    // watch,
     reset
   } = useForm()
 
@@ -39,6 +40,7 @@ export default function UserForm() {
         setLoading,
         setData: reset
       })
+      setTitleForm('Editar usuario')
       // const response = axios.get(`${GET_USER_BY_ID}/${id}/${credentials.token}`)
       // reset(response.data.data)
     }
@@ -94,9 +96,7 @@ export default function UserForm() {
     <DashBoardLayout>
       <main className='my-10'>
         <div className='bg-white w-[80%] mx-auto shadow-md rounded-2xl'>
-          <h1 className='text-center text-2xl font-bold py-6'>
-            Añadir nuevo usuario
-          </h1>
+          <h1 className='text-center text-2xl font-bold py-6'>{titleForm}</h1>
           <form onSubmit={onSubmit} className='flex flex-col gap-y-4 px-8 mt-6'>
             <div className='flex justify-between items-center w-full'>
               <label htmlFor='username' className='w-[40%] font-semibold'>
@@ -112,10 +112,7 @@ export default function UserForm() {
                 className={`block w-[60%] rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 text-sm sm:text-md sm:leading-6 ${
                   loading && 'opacity-60'
                 }`}
-                // className={`bg-gray-200 text-gray-900 text-lg rounded-lg w-[60%] block border-none ring-0 focus:ring-1 focus:ring-blue-300 shadow-sm ${
-                //   errors.username &&
-                //   'ring-red-300 focus:ring-1 focus:ring-red-300'
-                // }`}
+                disabled={loading}
                 placeholder='Ladya.sandra'
                 {...register('username', {
                   required: {
@@ -139,6 +136,7 @@ export default function UserForm() {
                 className={`block w-[60%] rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 text-sm sm:text-md sm:leading-6 ${
                   loading && 'opacity-60'
                 }`}
+                disabled={loading}
                 placeholder='Ladya.sandra@onat.gob.cu'
                 {...register('email', {
                   required: {
@@ -162,6 +160,7 @@ export default function UserForm() {
                 className={`block w-[60%] rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 text-sm sm:text-md sm:leading-6 ${
                   loading && 'opacity-60'
                 }`}
+                disabled={loading}
                 placeholder='*******'
                 {...register('password', {
                   required: {
@@ -200,6 +199,7 @@ export default function UserForm() {
                 className={`block w-[60%] rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-blue-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 text-sm sm:text-md sm:leading-6 ${
                   loading && 'opacity-60'
                 }`}
+                disabled={loading}
                 id='role'
                 {...register('role', {
                   required: {
@@ -216,13 +216,15 @@ export default function UserForm() {
             <div className='flex justify-end items-center gap-x-4 my-6'>
               <button
                 type='submit'
-                className='bg-blue-800 px-4 py-2 uppercase text-white hover:bg-blue-600 transition rounded-md shadow'
+                className={`bg-blue-800 px-4 py-2 uppercase text-white hover:bg-blue-600 transition rounded-md shadow ${loading && 'opacity-60'}`}
+                disabled={loading}
               >
                 Aceptar
               </button>
               <Link
-                to={'/dashboard/users'}
-                className='bg-red-800 px-4 py-2 uppercase text-white hover:bg-red-600 transition rounded-md shadow'
+                to={DASHBOARD_USER}
+                className={`bg-red-800 px-4 py-2 uppercase text-white hover:bg-red-600 transition rounded-md shadow ${loading && 'opacity-60'}`}
+                disabled={loading}
               >
                 <button type='reset'>Cancelar</button>
               </Link>

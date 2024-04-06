@@ -1,4 +1,4 @@
-export default function Loader() {
+export default function Loader({ styles }) {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -10,7 +10,7 @@ export default function Loader() {
       strokeWidth={2}
       strokeLinecap='round'
       strokeLinejoin='round'
-      className='icon icon-tabler icons-tabler-outline icon-tabler-loader'
+      className={styles}
     >
       <path stroke='none' d='M0 0h24v24H0z' fill='none' />
       <path d='M12 6l0 -3' />

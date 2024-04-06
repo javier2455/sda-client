@@ -1,4 +1,4 @@
-export default function Checks() {
+export default function Checks({styles}) {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -10,7 +10,7 @@ export default function Checks() {
       strokeWidth={2}
       strokeLinecap='round'
       strokeLinejoin='round'
-      className='icon icon-tabler icons-tabler-outline icon-tabler-checks'
+      className={styles}
     >
       <path stroke='none' d='M0 0h24v24H0z' fill='none' />
       <path d='M7 12l5 5l10 -10' />

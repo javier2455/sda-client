@@ -9,6 +9,7 @@ import Apis from './pages/Apis.jsx'
 import { Toaster } from 'sonner'
 import { Navigate } from 'react-router-dom'
 import UserForm from './pages/Form/UserForm.jsx'
+import ApiForm from './pages/Form/ApiForm.jsx'
 
 export default function App() {
   return (
@@ -24,6 +25,8 @@ export default function App() {
             <Route path='/dashboard/users/form' element={<UserForm />} />
             <Route path='/dashboard/users/form/:id' element={<UserForm />} />
             <Route path='/dashboard/apis' element={<Apis />} />
+            <Route path='/dashboard/apis/form/' element={<ApiForm />} />
+            <Route path='/dashboard/apis/form/:id' element={<ApiForm />} />
           </Route>
         </Routes>
       </AuthProvider>
