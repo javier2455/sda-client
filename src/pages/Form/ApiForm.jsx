@@ -21,7 +21,7 @@ import { useEffect } from 'react'
 import { FetchDataAPI } from '../../libs/fetchData'
 // import CustomSelect from '../../components/Select/CustomSelect'
 import Select from 'react-tailwindcss-select'
-import { ENTITIES } from '../../constants'
+import { API_BODY, API_METHOD, API_VISIBILITY, ENTITIES } from '../../constants'
 
 export default function ApiForm() {
   const [loading, setLoading] = useState(false)
@@ -88,9 +88,12 @@ export default function ApiForm() {
       })
       data.headers = d_headers
       data.params = r_params
-      data.entities = d_entities.map((e) => {
-        return { name: e.value }
-      })
+      if (d_entities) {
+        data.entities = d_entities.map((e) => {
+          return { name: e.value }
+        })
+      } else data.entities = []
+
       // END - Reworked the data
       const credentials = JSON.parse(getItem('user'))
       if (id) {
@@ -216,23 +219,29 @@ export default function ApiForm() {
                   )}
                 </label>
                 <div className='mt-2'>
-                  <input
+                  <select
                     id='method'
                     name='method'
-                    type='text'
-                    autoComplete='method'
-                    required
                     className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       loading && 'opacity-60'
                     }`}
+                    disabled={loading}
                     {...register('method', {
                       required: {
                         value: true,
-                        message: 'El campo método de la api es requerido'
+                        message: 'La API debe tener un metódo asignado'
                       }
                     })}
-                    // disabled={loading}
-                  />
+                  >
+                    <option value=''>--Seleccione un metódo--</option>
+                    <option value={API_METHOD.GET}>{API_METHOD.GET}</option>
+                    <option value={API_METHOD.POST}>{API_METHOD.POST}</option>
+                    <option value={API_METHOD.PUT}>{API_METHOD.PUT}</option>
+                    <option value={API_METHOD.DELETE}>
+                      {API_METHOD.DELETE}
+                    </option>
+                    <option value={API_METHOD.PATCH}>{API_METHOD.PATCH}</option>
+                  </select>
                 </div>
               </div>
               <div className='w-full md:w-1/2'>
@@ -246,23 +255,28 @@ export default function ApiForm() {
                   )}
                 </label>
                 <div className='mt-2'>
-                  <input
+                  <select
                     id='visibility'
                     name='visibility'
-                    type='text'
-                    autoComplete='visibility'
-                    required
                     className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       loading && 'opacity-60'
                     }`}
+                    disabled={loading}
                     {...register('visibility', {
                       required: {
                         value: true,
-                        message: 'El campo visibilidad de la api es requerido'
+                        message: 'La API debe tener una visibilidad asignado'
                       }
                     })}
-                    // disabled={loading}
-                  />
+                  >
+                    <option value=''>--Seleccione la visibilidad--</option>
+                    <option value={API_VISIBILITY.PUBLIC}>
+                      {API_VISIBILITY.PUBLIC}
+                    </option>
+                    <option value={API_VISIBILITY.PRIVATE}>
+                      {API_VISIBILITY.PRIVATE}
+                    </option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -278,17 +292,22 @@ export default function ApiForm() {
                   )}
                 </label>
                 <div className='mt-2'>
-                  <input
+                  <select
                     id='body'
                     name='body'
-                    type='text'
-                    autoComplete='body'
                     className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       loading && 'opacity-60'
                     }`}
+                    disabled={loading}
                     {...register('body')}
-                    // disabled={loading}
-                  />
+                  >
+                    <option value=''>--Seleccione el cuerpo--</option>
+                    <option value={API_BODY.PLAIN}>{API_BODY.PLAIN}</option>
+                    <option value={API_BODY.XML}>{API_BODY.XML}</option>
+                    <option value={API_BODY.JSON}>{API_BODY.JSON}</option>
+                    <option value={API_BODY.FORM}>{API_BODY.FORM}</option>
+                    <option value={API_BODY.OTHER}>{API_BODY.OTHER}</option>
+                  </select>
                 </div>
               </div>
               <div className='w-full md:w-1/2'>
