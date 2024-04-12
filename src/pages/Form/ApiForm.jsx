@@ -1,12 +1,27 @@
 import { useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import axios from 'axios'
 import DashBoardLayout from '../../layout/DashBoardLayout'
-import SelectEntity from '../../components/Select/SelectEntity'
+// import SelectEntity from '../../components/Select/SelectEntity'
 import PlusIcon from '../../icons/Plus'
 import TrashIcon from '../../icons/Trash'
-import { Link } from 'react-router-dom'
-import { DASHBOARD_API } from '../../routes/routes'
+import {
+  CREATE_API,
+  DASHBOARD_API,
+  GET_API_BY_ID,
+  UPDATE_API
+} from '../../routes/routes'
 import ApiHeaderModal from '../../components/Modal/ApiHeaderModal'
 import ApiParamsModal from '../../components/Modal/ApiParamsModal'
+import { useForm } from 'react-hook-form'
+import { useSessionStorage } from '../../hooks/useSessionStorage'
+import handleErrors from '../../libs/handleErrors'
+import showToastMessages from '../../libs/showToastMessages'
+import { useEffect } from 'react'
+import { FetchDataAPI } from '../../libs/fetchData'
+// import CustomSelect from '../../components/Select/CustomSelect'
+import Select from 'react-tailwindcss-select'
+import { ENTITIES } from '../../constants'
 
 export default function ApiForm() {
   const [loading, setLoading] = useState(false)
@@ -17,6 +32,33 @@ export default function ApiForm() {
   const [openModalHeaders, setOpenModalHeaders] = useState(false)
   const [openModalParams, setOpenModalParams] = useState(false)
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset
+  } = useForm()
+
+  const { getItem } = useSessionStorage()
+  const navigate = useNavigate()
+  const { id } = useParams()
+
+  useEffect(() => {
+    if (id) {
+      const credentials = JSON.parse(getItem('user'))
+      FetchDataAPI({
+        url: `${GET_API_BY_ID}/${id}/${credentials.token}`,
+        method: 'get',
+        setLoading,
+        setData: reset,
+        setHeaders: setD_headers,
+        setParams: setD_params,
+        setEntities: setD_entities
+      })
+      setTitleForm('Editar API')
+    }
+  }, [])
+
   const handleDeleteHeader = (key) => {
     setD_headers(d_headers.filter((header) => header.key !== key))
   }
@@ -25,12 +67,80 @@ export default function ApiForm() {
     setD_params(d_params.filter((param) => param.name !== name))
   }
 
+  const handleInputParam = (value) => {
+    if (Number(value) === 1) return 'Entrada'
+    if (Number(value) === 2) return 'Salida'
+    return
+  }
+
+  const handleEntitiesOnChange = (value) => {
+    setD_entities(value)
+  }
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      setLoading(true)
+      // BEGIN - Reworked the data
+      if (data.body === '') delete data.body
+      const r_params = d_params.map((p) => {
+        p.inputOrOutput = Number(p.inputOrOutput)
+        return p
+      })
+      data.headers = d_headers
+      data.params = r_params
+      data.entities = d_entities.map((e) => {
+        return { name: e.value }
+      })
+      // END - Reworked the data
+      const credentials = JSON.parse(getItem('user'))
+      if (id) {
+        const response = await axios.patch(
+          `${UPDATE_API}/${id}/${credentials.token}`,
+          data
+        )
+        console.log(response)
+        if (response.status === 200) {
+          showToastMessages({
+            title: response.data.message,
+            description: response.data.description,
+            type: 'success',
+            duration: 2000
+          })
+          setTimeout(() => {
+            navigate(DASHBOARD_API)
+          }, 2000)
+        }
+      } else {
+        const response = await axios.post(
+          `${CREATE_API}/${credentials.token}`,
+          data
+        )
+        console.log('this is the response', response)
+        if (response.status === 201) {
+          showToastMessages({
+            title: response.data.message,
+            description: response.data.description,
+            type: 'success',
+            duration: 2000
+          })
+          setTimeout(() => {
+            navigate(DASHBOARD_API)
+          }, 2000)
+        }
+      }
+    } catch (error) {
+      handleErrors({ error })
+    } finally {
+      setLoading(false)
+    }
+  })
+
   return (
     <DashBoardLayout>
       <main className='my-10 overflow-y-auto max-h-[500px]'>
         <div className='bg-white w-full mx-auto shadow-md rounded-2xl '>
           <h1 className='text-center text-2xl font-bold py-6'>{titleForm}</h1>
-          <form className='px-6 py-6 '>
+          <form onSubmit={onSubmit} className='px-6 py-6 '>
             {/* Inputs */}
             <div className='flex flex-col md:flex-row justify-between items-center gap-x-4 mb-6'>
               <div className='w-full md:w-1/2'>
@@ -39,6 +149,9 @@ export default function ApiForm() {
                   className='block text-sm font-medium leading-6 text-gray-900'
                 >
                   Nombre
+                  {errors.name && (
+                    <span className='text-red-500 text-sm ml-2'>*</span>
+                  )}
                 </label>
                 <div className='mt-2'>
                   <input
@@ -50,6 +163,12 @@ export default function ApiForm() {
                     className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       loading && 'opacity-60'
                     }`}
+                    {...register('name', {
+                      required: {
+                        value: true,
+                        message: 'El campo nombre de la api es requerido'
+                      }
+                    })}
                     // disabled={loading}
                   />
                 </div>
@@ -60,6 +179,9 @@ export default function ApiForm() {
                   className='block text-sm font-medium leading-6 text-gray-900'
                 >
                   URL
+                  {errors.url && (
+                    <span className='text-red-500 text-sm ml-2'>*</span>
+                  )}
                 </label>
                 <div className='mt-2'>
                   <input
@@ -71,6 +193,12 @@ export default function ApiForm() {
                     className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       loading && 'opacity-60'
                     }`}
+                    {...register('url', {
+                      required: {
+                        value: true,
+                        message: 'El campo nombre de la api es requerido'
+                      }
+                    })}
                     // disabled={loading}
                   />
                 </div>
@@ -83,6 +211,9 @@ export default function ApiForm() {
                   className='block text-sm font-medium leading-6 text-gray-900'
                 >
                   Método (Method)
+                  {errors.method && (
+                    <span className='text-red-500 text-sm ml-2'>*</span>
+                  )}
                 </label>
                 <div className='mt-2'>
                   <input
@@ -94,6 +225,12 @@ export default function ApiForm() {
                     className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       loading && 'opacity-60'
                     }`}
+                    {...register('method', {
+                      required: {
+                        value: true,
+                        message: 'El campo método de la api es requerido'
+                      }
+                    })}
                     // disabled={loading}
                   />
                 </div>
@@ -104,6 +241,9 @@ export default function ApiForm() {
                   className='block text-sm font-medium leading-6 text-gray-900'
                 >
                   Visibilidad
+                  {errors.visibility && (
+                    <span className='text-red-500 text-sm ml-2'>*</span>
+                  )}
                 </label>
                 <div className='mt-2'>
                   <input
@@ -115,6 +255,12 @@ export default function ApiForm() {
                     className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       loading && 'opacity-60'
                     }`}
+                    {...register('visibility', {
+                      required: {
+                        value: true,
+                        message: 'El campo visibilidad de la api es requerido'
+                      }
+                    })}
                     // disabled={loading}
                   />
                 </div>
@@ -127,6 +273,9 @@ export default function ApiForm() {
                   className='block text-sm font-medium leading-6 text-gray-900'
                 >
                   Cuerpo (Body)
+                  {errors.body && (
+                    <span className='text-red-500 text-sm ml-2'>*</span>
+                  )}
                 </label>
                 <div className='mt-2'>
                   <input
@@ -134,10 +283,10 @@ export default function ApiForm() {
                     name='body'
                     type='text'
                     autoComplete='body'
-                    required
                     className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       loading && 'opacity-60'
                     }`}
+                    {...register('body')}
                     // disabled={loading}
                   />
                 </div>
@@ -150,7 +299,19 @@ export default function ApiForm() {
                   Entidades
                 </label>
                 <div className='mt-2'>
-                  <SelectEntity selected={d_entities} setSelected={setD_entities}/>
+                  <Select
+                    value={d_entities}
+                    onChange={handleEntitiesOnChange}
+                    options={ENTITIES}
+                    isMultiple={true}
+                    isClearable={true}
+                    isSearchable={true}
+                  />
+                  {/* <CustomSelect selected={d_entities} setSelected={setD_entities}/> */}
+                  {/* <SelectEntity
+                    selected={d_entities}
+                    setSelected={setD_entities}
+                  /> */}
                   {/* <select
                     id='inputOrOutput'
                     name='inputOrOutput'
@@ -172,6 +333,9 @@ export default function ApiForm() {
                   className='block text-sm font-medium leading-6 text-gray-900'
                 >
                   Descripción
+                  {errors.description && (
+                    <span className='text-red-500 text-sm ml-2'>*</span>
+                  )}
                 </label>
                 <div className='mt-2'>
                   <textarea
@@ -180,6 +344,12 @@ export default function ApiForm() {
                     rows={3}
                     className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                     defaultValue={''}
+                    {...register('description', {
+                      required: {
+                        value: true,
+                        message: 'El campo descripción de la api es requerido'
+                      }
+                    })}
                   />
                 </div>
               </div>
@@ -223,16 +393,18 @@ export default function ApiForm() {
                   </tr>
                 </thead>
                 <tbody>
-                  {d_headers.length === 0 && (
-                    <td
-                      colSpan={3}
-                      className='text-center text-lg px-6 py-4 text-black font-bold'
-                    >
-                      Sin cabeceras definidas
-                    </td>
-                  )}
-                  {d_headers.map((u) => (
-                    <tr key={u.key} className='border-b text-[14px] text-black'>
+                  <tr>
+                    {d_headers.length === 0 && (
+                      <td
+                        colSpan={3}
+                        className='text-center text-lg px-6 py-4 text-black font-bold'
+                      >
+                        Sin cabeceras definidas
+                      </td>
+                    )}
+                  </tr>
+                  {d_headers.map((u, index) => (
+                    <tr key={index} className='border-b text-[14px] text-black'>
                       <td className='px-6 py-4 text-center font-semibold'>
                         {u.key}
                       </td>
@@ -298,14 +470,16 @@ export default function ApiForm() {
                   </tr>
                 </thead>
                 <tbody>
-                  {d_params.length === 0 && (
-                    <td
-                      colSpan={6}
-                      className='text-center text-lg px-6 py-4 text-black font-bold'
-                    >
-                      Sin parámetros definidas
-                    </td>
-                  )}
+                  <tr>
+                    {d_params.length === 0 && (
+                      <td
+                        colSpan={6}
+                        className='text-center text-lg px-6 py-4 text-black font-bold'
+                      >
+                        Sin parámetros definidas
+                      </td>
+                    )}
+                  </tr>
                   {d_params.map((p) => (
                     <tr
                       key={p.name}
@@ -325,7 +499,7 @@ export default function ApiForm() {
                         {p.example}
                       </td>
                       <td className='px-6 py-4 text-center'>
-                        {p.inputOrOutput}
+                        {handleInputParam(p.inputOrOutput)}
                       </td>
                       <td
                         onClick={() => handleDeleteParams(p.name)}

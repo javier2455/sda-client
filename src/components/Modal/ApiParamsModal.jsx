@@ -127,8 +127,8 @@ export default function ApiParamsModal({
                         })}
                       >
                         <option value=''>--Seleccione un tipo--</option>
-                        <option value='entrada'>Entrada</option>
-                        <option value='salida'>Salida</option>
+                        <option value={1}>Entrada</option>
+                        <option value={2}>Salida</option>
                       </select>
                     </div>
                   </div>

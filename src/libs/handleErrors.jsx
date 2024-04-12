@@ -28,6 +28,18 @@ export default function handleErrors({ error }) {
         />
       ))
     }
+    if (error.response.data.message === 'Permisos insuficientes') {
+      return toast.custom((t) => (
+        <Toast
+          title={'Permisos insuficientes'}
+          description={
+            'Su rol no permite ejecutar dicha acción'
+          }
+          t={t}
+          type={'error'}
+        />
+      ))
+    }
   }
   if (error.code === 'ERR_NETWORK') {
     return toast.custom((t) => (

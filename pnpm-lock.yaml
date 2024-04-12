@@ -23,6 +23,9 @@ dependencies:
   react-router-dom:
     specifier: ^6.22.3
     version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+  react-tailwindcss-select:
+    specifier: ^1.8.5
+    version: 1.8.5(react@18.2.0)
   sonner:
     specifier: ^1.4.41
     version: 1.4.41(react-dom@18.2.0)(react@18.2.0)
@@ -2612,6 +2615,14 @@ packages:
       react: '>=16.8'
     dependencies:
       '@remix-run/router': 1.15.3
+      react: 18.2.0
+    dev: false
+
+  /react-tailwindcss-select@1.8.5(react@18.2.0):
+    resolution: {integrity: sha512-x29IrLiqBT5FnkC9oFQReOr05tEOZHtDtZdha84nlSWcj3qD67yonKFHXIf69yc8ElFlKUxCEv0zCllN8jHBFA==}
+    peerDependencies:
+      react: ^18.2.0
+    dependencies:
       react: 18.2.0
     dev: false
 

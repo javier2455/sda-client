@@ -1,13 +1,13 @@
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { DASHBOARD_USER_FORM, DELETE_USER } from '../../routes/routes'
+import axios from 'axios'
+import { useSessionStorage } from '../../hooks/useSessionStorage'
+import showToastMessages from '../../libs/showToastMessages'
+import DeleteModal from '../Modal/DeleteModal'
 import Badge from '../Badge/Badge'
 import EditIcon from '../../icons/Edit'
 import TrashIcon from '../../icons/Trash'
-import axios from 'axios'
-import showToastMessages from '../../libs/showToastMessages'
-import { useSessionStorage } from '../../hooks/useSessionStorage'
-import { Link } from 'react-router-dom'
-import DeleteModal from '../Modal/DeleteModal'
-import { useState } from 'react'
-import { DASHBOARD_USER_FORM } from '../../routes/routes'
 
 export default function UserTable({ data, setData }) {
   const [openModal, setOpenModal] = useState(false)
@@ -23,7 +23,7 @@ export default function UserTable({ data, setData }) {
     const credentials = JSON.parse(getItem('user'))
 
     const response = await axios.delete(
-      `http://localhost:4001/user/delete_user/${id}/${credentials.token}`
+      `${DELETE_USER}/${id}/${credentials.token}`
     )
     if (response.status === 200) {
       console.log(response)

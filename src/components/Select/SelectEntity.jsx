@@ -3,6 +3,7 @@ import { Listbox, Transition } from '@headlessui/react'
 import CheckIcon from '../../icons/Checks'
 import ArrowDownIcon from '../../icons/ArrowDown'
 import Badge from '../Badge/Badge'
+import { useEffect } from 'react'
 
 const entities = [
   { name: 'ONAT' },
@@ -11,14 +12,18 @@ const entities = [
   { name: 'MININT' }
 ]
 
-export default function SelectEntity({selected, setSelected}) {
+export default function SelectEntity({ selected, setSelected }) {
   // const [selected, setSelected] = useState([])
+  
 
   return (
     <div className=''>
       <Listbox value={selected} onChange={setSelected} multiple>
         <div className='relative mt-1'>
-          <Listbox.Button id='entity' className='relative w-full cursor-pointer h-9 rounded-md bg-white py-2 pl-3 pr-10 text-left border-0 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm'>
+          <Listbox.Button
+            id='entity'
+            className='relative w-full cursor-pointer h-9 rounded-md bg-white py-2 pl-3 pr-10 text-left border-0 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm'
+          >
             <div className='max-w-full truncate'>
               {selected &&
                 selected.map((s) => (
@@ -46,6 +51,7 @@ export default function SelectEntity({selected, setSelected}) {
                     }`
                   }
                   value={entity}
+                  // value={entities.find((e) => e.name === selected.name)}
                 >
                   {({ selected }) => (
                     <>

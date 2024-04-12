@@ -53,12 +53,18 @@ const AuthProvider = ({ children }) => {
     return JSON.parse(getItem('user'))
   }
 
+  function getUserRole() {
+    const user = JSON.parse(getItem('user'))
+    return user.role
+  }
+
   const data = {
     user,
     setUser,
     login,
     logout,
     profile,
+    getUserRole,
     loading
   }
 

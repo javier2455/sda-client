@@ -7,10 +7,10 @@ import { useState } from 'react'
 import showToastMessages from '../../libs/showToastMessages'
 import handleErrors from '../../libs/handleErrors'
 import {
-  CREATE_NEW_USER,
+  CREATE_USER,
   DASHBOARD_USER,
   GET_USER_BY_ID,
-  UPDATE_NEW_USER
+  UPDATE_USER
 } from '../../routes/routes'
 import { useEffect } from 'react'
 import { FetchData } from '../../libs/fetchData'
@@ -22,14 +22,12 @@ export default function UserForm() {
     register,
     handleSubmit,
     formState: { errors },
-    // watch,
     reset
   } = useForm()
 
   const { getItem } = useSessionStorage()
   const navigate = useNavigate()
   const { id } = useParams()
-  // console.log('parametro id:', id)
 
   useEffect(() => {
     if (id) {
@@ -41,8 +39,6 @@ export default function UserForm() {
         setData: reset
       })
       setTitleForm('Editar usuario')
-      // const response = axios.get(`${GET_USER_BY_ID}/${id}/${credentials.token}`)
-      // reset(response.data.data)
     }
   }, [])
 
@@ -52,7 +48,7 @@ export default function UserForm() {
       const credentials = JSON.parse(getItem('user'))
       if (id) {
         const response = await axios.patch(
-          `${UPDATE_NEW_USER}/${id}/${credentials.token}`,
+          `${UPDATE_USER}/${id}/${credentials.token}`,
           data
         )
         console.log(response)
@@ -69,7 +65,7 @@ export default function UserForm() {
         }
       } else {
         const response = await axios.post(
-          `${CREATE_NEW_USER}/${credentials.token}`,
+          `${CREATE_USER}/${credentials.token}`,
           data
         )
         console.log('this is the response', response)
@@ -170,23 +166,6 @@ export default function UserForm() {
                 })}
               />
             </div>
-            {/* <div className='flex justify-center items-center w-full'>
-              <label
-                htmlFor='confirm-password'
-                className='w-[40%] font-semibold'
-              >
-                Confirmar Contraseña
-                {errors.email && (
-                  <span className='text-red-500 text-sm ml-2'>*</span>
-                )}
-              </label>
-              <input
-                type='password'
-                id='confirm-password'
-                className='bg-gray-200 text-gray-900 text-lg rounded-lg block w-[60%] border-none focus:ring-1 ring-0 ring-blue-300 shadow-sm'
-                placeholder='*******'
-              />
-            </div> */}
             <div className='flex justify-center items-center w-full'>
               <label htmlFor='role' className='w-[40%] font-semibold'>
                 Rol
