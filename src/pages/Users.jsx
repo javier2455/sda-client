@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { FetchData } from '../libs/fetchData'
 import { useSessionStorage } from '../hooks/useSessionStorage'
 import UserCountBoxCard from '../components/Card/CountBoxCard'
-import { DASHBOARD_USER_FORM } from '../routes/routes'
+import { DASHBOARD_USER_FORM, GET_ALL_USERS } from '../routes/routes'
 import HeaderTable from '../components/Table/HeaderTable'
 import LoaderComponent from '../components/Loader/LoaderComponent'
 
@@ -18,7 +18,7 @@ export default function Users() {
   useEffect(() => {
     const credentials = JSON.parse(getItem('user'))
     FetchData({
-      url: `http://localhost:4001/user/get_all_users/${credentials.token}`,
+      url: `${GET_ALL_USERS}/${credentials.token}`,
       method: 'get',
       setLoading,
       setData

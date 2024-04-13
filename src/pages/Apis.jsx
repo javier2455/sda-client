@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import HeaderTable from '../components/Table/HeaderTable'
 import DashBoardLayout from '../layout/DashBoardLayout'
-import { DASHBOARD_API_FORM } from '../routes/routes'
+import { DASHBOARD_API_FORM, GET_ALL_APIS } from '../routes/routes'
 import { useSessionStorage } from '../hooks/useSessionStorage'
 import { FetchData } from '../libs/fetchData'
 import { useEffect } from 'react'
@@ -18,7 +18,7 @@ export default function Apis() {
   useEffect(() => {
     const credentials = JSON.parse(getItem('user'))
     FetchData({
-      url: `http://localhost:4001/api/get_all_apis/${credentials.token}`,
+      url: `${GET_ALL_APIS}/${credentials.token}`,
       method: 'get',
       setLoading,
       setData
@@ -29,7 +29,7 @@ export default function Apis() {
     <DashBoardLayout>
       <section className='max-h-screen'>
         <div className='flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 my-4 '>
-          <HeaderTable route={DASHBOARD_API_FORM} />
+          <HeaderTable route={DASHBOARD_API_FORM} setData={setData} data={data}/>
         </div>
         <div className='w-full h-[450px] max-h-[450px] overflow-y-auto py-6 px-4 bg-white rounded-md shadow-lg'>
         {loading && <LoaderComponent />}

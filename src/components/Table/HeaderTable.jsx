@@ -3,9 +3,38 @@ import PlusIcon from '../../icons/Plus'
 import SearchIcon from '../../icons/Search'
 import { useContext } from 'react'
 import { AuthContext } from '../../context/AuthContext'
+import { useState } from 'react'
+import { useEffect } from 'react'
 
-export default function HeaderTable({ route }) {
+export default function HeaderTable({ route, data, setData }) {
+  // const [search, setSearch] = useState('')
+  const [savedData, setSavedData] = useState([])
   const { getUserRole } = useContext(AuthContext)
+  
+  useEffect(() => {
+    setSavedData(data)
+  }, [])
+  
+
+  const handleOnChange = (e) => {
+    if (e.target.value == '') {
+      setData(savedData)
+    }
+    const test = data.filter((d) =>
+      d.name.toLowerCase().includes(e.target.value.toLowerCase())
+    )
+    setData(test)
+  }
+
+  // let savedData = []
+  // if (!search) {
+  //   savedData = data
+  // } else {
+  //   savedData = data.filter((d) =>
+  //     d.name.toLowerCase().includes(search.toLowerCase())
+  //   )
+  //   setData(savedData)
+  // }
 
   return (
     <>
@@ -19,11 +48,11 @@ export default function HeaderTable({ route }) {
               <SearchIcon />
             </div>
             <input
-              type='text'
+              type='search'
               id='simple-search'
-              className='bg-gray-50 text-gray-600 text-lg rounded-lg block w-full pl-12 border-none focus:ring-0 ring-0 shadow-sm'
-              placeholder='Buscar'
-              required
+              className='bg-gray-50 text-gray-600 text-[15px] rounded-lg block w-full pl-12 border-none focus:ring-0 ring-0 shadow-sm'
+              placeholder='Buscar por nombre'
+              onChange={(e) => handleOnChange(e)}
             />
           </div>
         </form>

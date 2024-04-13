@@ -4,6 +4,7 @@ import handleErrors from '../libs/handleErrors'
 import { useSessionStorage } from '../hooks/useSessionStorage'
 import { useNavigate } from 'react-router-dom'
 import showToastMessages from '../libs/showToastMessages'
+import { SEND_AUTH } from '../routes/routes'
 
 export const AuthContext = createContext()
 
@@ -19,11 +20,11 @@ const AuthProvider = ({ children }) => {
       setLoading(true)
       const response = await axios({
         method: 'post',
-        url: 'http://localhost:4001/auth/login',
+        url: SEND_AUTH,
         data: credentials
       })
       if (response.status === 200) {
-        console.log(response)
+        // console.log(response)
         showToastMessages({
           title: response.data.message,
           description: response.data.description,
